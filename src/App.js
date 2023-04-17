@@ -4,7 +4,10 @@ import MapOL from './Components/MapOL';
 
 function App() {
   return (
-      <MapOL/>
+    <div>
+      <MapOL />
+    </div>
+      
   );
 }
 
