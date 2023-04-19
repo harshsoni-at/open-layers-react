@@ -32,13 +32,17 @@ const MapOL = () => {
         })
 
         setMap(initMap)
+
+        
+
+
     }, [])
 
 
     return(
         <MapContext.Provider value = {{map}} >
-            <div ref = {mapElement} id="map">
-                <DrawMap  />
+            <div ref = {mapElement} id="map" >
+                <DrawMap  mapElement = {mapElement}/>
             </div>
         </MapContext.Provider>
         
