@@ -1,5 +1,5 @@
 import {Draw, Modify, Select} from "ol/interaction";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styles from "../styles";
 import MapContext from "../utils/MapContext";
 import VectorLayer from "ol/layer/Vector";
@@ -18,19 +18,18 @@ const DrawMap = () => {
 
     const {map} = useContext(MapContext);
 
-    // useEffect(() => {
-    //     function handleEvent(e) {
-    //         e.preventDefault()
-    //         console.log("div", select);
-    //         if(e.key === 'Delete') {
-    //             deleteSelectedInteraction();
-    //         }
-    //     }
-    //     const div = document.body;
-    //     div.addEventListener('keydown', handleEvent);
-    //     console.log("hi")
-    //     return () => div.removeEventListener('keydown', handleEvent);
-    // }, [select])
+    useEffect(() => {
+        const deleteHandler = (event) => {
+          if (event.stopPropagation) event.stopPropagation();
+          const KeyID = event.keyCode;
+          console.log(KeyID);
+          if (KeyID === 46) {
+            deleteSelectedInteraction();
+          }
+        };
+        document.addEventListener("keydown", deleteHandler);
+        return () => document.removeEventListener("keydown", deleteHandler);
+      }, [select]);
 
     useEffect(()=>{
         let drawTmp;
