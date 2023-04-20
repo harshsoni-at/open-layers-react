@@ -7,39 +7,38 @@ import VectorSource from "ol/source/Vector";
 
 
 
-const DrawMap = ({mapElement}) => {
+const DrawMap = () => {
 
     const [value, setValue] = useState("") ;
     const [vec, setVec] = useState({}) ;
     const [draw, setDraw] = useState();
     const [select, setSelect] = useState({});
-    const[src, setSrc] = useState();
 
     
 
     const {map} = useContext(MapContext);
 
-    useEffect(() => {
-        function handleEvent(e) {
-            e.preventDefault()
-            // console.log("div", select);
-            if(e.key === 'Delete') {
-                deleteSelectedInteraction();
-            }
-        }
-        const div = document.body;
-        div.addEventListener('keydown', handleEvent)
-    }, [draw])
+    // useEffect(() => {
+    //     function handleEvent(e) {
+    //         e.preventDefault()
+    //         console.log("div", select);
+    //         if(e.key === 'Delete') {
+    //             deleteSelectedInteraction();
+    //         }
+    //     }
+    //     const div = document.body;
+    //     div.addEventListener('keydown', handleEvent);
+    //     console.log("hi")
+    //     return () => div.removeEventListener('keydown', handleEvent);
+    // }, [select])
 
     useEffect(()=>{
-        
+        let drawTmp;
         if(Object.keys(map).length !== 0){
 
             const src = new VectorSource({
                 wrapX: false
             })
-
-            setSrc(src);
     
             const vector = new VectorLayer({
                 source: src
@@ -50,8 +49,8 @@ const DrawMap = ({mapElement}) => {
             map.addLayer(vector);
 
             const initInteraction = () => {
-                if(value !== undefined){
-                    const drawTmp = new Draw({
+                if(value !== undefined ){
+                    drawTmp = new Draw({
                         source: src,
                         type : value,
                         style: styles[value]
@@ -66,10 +65,9 @@ const DrawMap = ({mapElement}) => {
             initInteraction();
         }
         
-        
-
         return () => {
-            Object.keys(map).length !== 0 && map.removeInteraction(draw);
+            Object.keys(map).length !== 0 && map.removeInteraction(drawTmp);
+            // setDraw(null);
             // div.removeEventListener('keydown')
         }
     }, [value])
@@ -82,28 +80,29 @@ const DrawMap = ({mapElement}) => {
             features: selectTmp.getFeatures(),
         }) ;
         map.addInteraction(modify);
-        const selectedFeatures = selectTmp.getFeatures();
+        // const selectedFeatures = selectTmp.getFeatures();
         selectTmp.setActive(true);
         
-        console.log("feature", selectedFeatures);
         modify.setActive(true);
-        // Draw.setActive(false);
         draw.setActive(false);
         map.removeInteraction(draw)
         setSelect(selectTmp);
     }
 
     const deleteSelectedInteraction = () => {
-        // console.log(select);
-        var selectedFeature = select.getFeatures().item(0);
-        vec.getSource().removeFeature(selectedFeature)
+        var selectedFeature = select.getFeatures();
+        let vecTmp = vec ;
+        selectedFeature.forEach(it => {
+            vecTmp.getSource().removeFeature(it)    
+        })
+        setVec(vecTmp);
     }
 
     
 
 
     return(
-        <div >
+        <div>
                 <button onClick={() => setValue("Point")}>Point</button>
                 <button onClick={() => setValue("LineString")}>Line String</button>
                 <button onClick={() => setValue("Polygon")}>Polygon</button>
